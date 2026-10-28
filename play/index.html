@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Irrlicht · Wisp</title>
+<style>
+:root{--bg:#f7f6f2;--fg:#1d1f24;--muted:#5d6370;--accent:#a8741a;--line:#dcd8cc;--code:#ecebe5}
+@media (prefers-color-scheme:dark){:root{--bg:#12141a;--fg:#e6e4dc;--muted:#a3a8b3;--accent:#e8b850;--line:#2b2f38;--code:#1b1e26}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+nav{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:12px;border-bottom:1px solid var(--line);font-size:15px}
+nav .lang{margin-left:auto}
+a{color:var(--accent)}
+h1{font-size:1.9em;line-height:1.25;margin:28px 0 8px}
+h2{font-size:1.3em;margin:32px 0 8px}
+h3{font-size:1.1em;margin:24px 0 6px}
+ul{padding-left:1.3em}
+pre{background:var(--code);padding:12px;overflow-x:auto;font-size:13px;line-height:1.45;white-space:pre-wrap;border-radius:6px}
+footer{margin-top:48px;color:var(--muted);font-size:14px}
+
+.code{font:700 2.2em/1.2 ui-monospace,Consolas,monospace;letter-spacing:.08em;margin:8px 0 20px;user-select:all}
+.buttons{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}
+.button{display:inline-block;padding:12px 20px;border-radius:10px;border:1px solid var(--accent);text-decoration:none;font-weight:600}
+.button.primary{background:var(--accent);color:var(--bg)}
+[hidden]{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1 id="title"></h1>
+<p id="intro"></p>
+<p id="missing" hidden></p>
+<p id="duel" hidden></p>
+<div class="buttons">
+<a id="open" class="button primary" href="#"></a>
+<a id="store" class="button" href="https://play.google.com/store/apps/details?id=de.mazemaker.irrlicht"></a>
+</div>
+<p id="manual"></p>
+<div id="code" class="code"></div>
+<footer>Irrlicht · Wisp · <a id="legal" href="../privacy.html"></a></footer>
+</main>
+<script>
+(function () {
+  var texts = {"de": {"title": "Ein Labyrinth für dich", "intro": "Jemand hat dir ein Irrlicht-Labyrinth geschickt. Merk dir den Weg – dann finde ihn im Dunkeln.", "duel": "Mit dabei: der Geist des geteilten Laufs. Schlag ihn!", "open": "Im Spiel öffnen", "store": "Bei Google Play laden", "manual": "Oder im Spiel unter „Code eingeben“ eintippen:", "missing": "Dieser Link enthält keinen gültigen Code.", "legal": "Datenschutz"}, "en": {"title": "A maze for you", "intro": "Someone sent you a Wisp maze. Remember the path – then find it in the dark.", "duel": "It comes with the ghost of their run. Beat it!", "open": "Open in the game", "store": "Get it on Google Play", "manual": "Or type it in the game under “Enter code”:", "missing": "This link has no valid code.", "legal": "Privacy"}};
+  var lang = (navigator.language || "en").toLowerCase().indexOf("de") === 0 ? "de" : "en";
+  var t = texts[lang];
+  document.documentElement.lang = lang;
+  document.title = t.title + " – " + (lang === "de" ? "Irrlicht" : "Wisp");
+  var params = new URLSearchParams(location.search);
+  var code = (params.get("c") || "").toUpperCase();
+  var ghost = params.get("g") || "";
+  if (!/^[0-9A-Z]{4}-?[0-9A-Z]{4}$/.test(code)) { code = ""; }
+  if (!/^[A-Za-z0-9_-]{1,1500}$/.test(ghost)) { ghost = ""; }
+  function set(id, text) { document.getElementById(id).textContent = text; }
+  set("title", t.title);
+  set("intro", t.intro);
+  set("duel", t.duel);
+  set("open", t.open);
+  set("store", t.store);
+  set("manual", t.manual);
+  set("missing", t.missing);
+  set("legal", t.legal);
+  document.getElementById("legal").href = lang === "de" ? "../datenschutz.html" : "../privacy.html";
+  if (!code) {
+    document.getElementById("missing").hidden = false;
+    document.getElementById("open").hidden = true;
+    document.getElementById("manual").hidden = true;
+    return;
+  }
+  set("code", code);
+  document.getElementById("duel").hidden = !ghost;
+  var path = "play/" + encodeURIComponent(code) + (ghost ? "?g=" + ghost : "");
+  document.getElementById("open").href = /android/i.test(navigator.userAgent)
+    ? "intent://" + path + "#Intent;scheme=irrlicht;package=de.mazemaker.irrlicht;S.browser_fallback_url="
+      + encodeURIComponent("https://play.google.com/store/apps/details?id=de.mazemaker.irrlicht") + ";end"
+    : "irrlicht://" + path;
+})();
+</script>
+</body>
+</html>
