@@ -52,7 +52,7 @@ footer{margin-top:48px;color:var(--muted);font-size:14px}
   var params = new URLSearchParams(location.search);
   var code = (params.get("c") || "").toUpperCase();
   var ghost = params.get("g") || "";
-  if (!/^[0-9A-Z]{4}-?[0-9A-Z]{4}$/.test(code)) { code = ""; }
+  if (!/^(A-?)?[0-9A-Z]{4}-?[0-9A-Z]{4}$/.test(code)) { code = ""; }
   if (!/^[A-Za-z0-9_-]{1,1500}$/.test(ghost)) { ghost = ""; }
   function set(id, text) { document.getElementById(id).textContent = text; }
   set("title", t.title);
